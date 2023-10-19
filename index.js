@@ -22,6 +22,7 @@ async function run() {
     await client.connect();
 
     const productsDB = client.db("BrandDB").collection("products");
+    const brandsDB = client.db("BrandDB").collection("brands");
 
     app.get("/products", async (req, res) => {
       const cursor = productsDB.find();
@@ -39,6 +40,19 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await productsDB.findOne(query);
+      res.send(result);
+    });
+
+    app.get("/brands", async (req, res) => {
+      const cursor = brandsDB.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    app.get("/brands/:name", async (req, res) => {
+      const brand = req.params.name;
+      const query = { brand: brand };
+      const cursor = productsDB.find(query);
+      const result = await cursor.toArray();
       res.send(result);
     });
 
