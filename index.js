@@ -3,7 +3,10 @@ const cors = require("cors");
 require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
+const path = require("path");
 const port = process.env.PORT || 3300;
+
+app.use(express.static(path.join(__dirname, "public")));
 
 // MIddleware configuration
 app.use(cors());
@@ -17,6 +20,11 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
 async function run() {
   try {
     // await client.connect();
