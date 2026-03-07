@@ -1,15 +1,19 @@
 const express = require("express");
 const cors = require("cors");
+const app = express();
 require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const app = express();
 const path = require("path");
 const port = process.env.PORT || 3300;
 
 app.use(express.static(path.join(__dirname, "public")));
 
 // MIddleware configuration
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://sr-brand-shop.web.app",
+  }),
+);
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_NAMEUSER}:${process.env.DB_PASSCODE}@cluster0.7dbji.mongodb.net/?retryWrites=true&w=majority`;
@@ -32,10 +36,6 @@ async function run() {
     const productsDB = client.db("BrandDB").collection("products");
     const brandsDB = client.db("BrandDB").collection("brands");
     const cartDB = client.db("BrandDB").collection("cart");
-
-    app.get("/", async (req, res) => {
-      res.send("Server Running");
-    });
 
     app.get("/products", async (req, res) => {
       const cursor = productsDB.find();
@@ -76,7 +76,7 @@ async function run() {
       const result = await productsDB.updateOne(
         filter,
         newProductData,
-        options
+        options,
       );
       res.send(result);
     });
@@ -117,7 +117,7 @@ async function run() {
 
     await client.db("admin").command({ ping: 1 });
     console.log(
-      "Pinged your deployment. You successfully connected to MongoDB Database!"
+      "Pinged your deployment. You successfully connected to MongoDB Database!",
     );
   } finally {
     // await client.close();
